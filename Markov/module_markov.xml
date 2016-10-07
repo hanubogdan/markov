@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_markov" default="compile.module.markov">
+  <dirname property="module.markov.basedir" file="${ant.file.module_markov}"/>
+  
+  <property name="module.jdk.home.markov" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.markov" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.markov" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.markov" value="-encoding UTF-8 -source 1.3 -target 1.3 ${compiler.args}"/>
+  
+  <property name="markov.output.dir" value="${module.markov.basedir}/../out/production/Markov"/>
+  <property name="markov.testoutput.dir" value="${module.markov.basedir}/../out/test/Markov"/>
+  
+  <path id="markov.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="markov.module.production.classpath"/>
+  
+  <path id="markov.runtime.production.module.classpath">
+    <pathelement location="${markov.output.dir}"/>
+  </path>
+  
+  <path id="markov.module.classpath">
+    <pathelement location="${markov.output.dir}"/>
+  </path>
+  
+  <path id="markov.runtime.module.classpath">
+    <pathelement location="${markov.testoutput.dir}"/>
+    <pathelement location="${markov.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.markov">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.markov">
+    <patternset refid="excluded.from.module.markov"/>
+  </patternset>
+  
+  <path id="markov.module.sourcepath">
+    <dirset dir="${module.markov.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.markov" depends="compile.module.markov.production,compile.module.markov.tests" description="Compile module Markov"/>
+  
+  <target name="compile.module.markov.production" depends="register.custom.compilers" description="Compile module Markov; production classes">
+    <mkdir dir="${markov.output.dir}"/>
+    <javac2 destdir="${markov.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.markov}/javac">
+      <compilerarg line="${compiler.args.markov}"/>
+      <bootclasspath refid="markov.module.bootclasspath"/>
+      <classpath refid="markov.module.production.classpath"/>
+      <src refid="markov.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.markov"/>
+    </javac2>
+    
+    <copy todir="${markov.output.dir}">
+      <fileset dir="${module.markov.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.markov.tests" depends="register.custom.compilers,compile.module.markov.production" description="compile module Markov; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.markov" description="cleanup module">
+    <delete dir="${markov.output.dir}"/>
+    <delete dir="${markov.testoutput.dir}"/>
+  </target>
+</project>
