@@ -6,10 +6,7 @@
 package markov;
 
 import org.apache.commons.lang.StringUtils;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -19,6 +16,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.*;
+
+//start excel iport
+import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.*;
+
+//start excel iport
+import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+// end excel import
 
 /**
  *
@@ -32,6 +52,9 @@ public class Markov {
      */
     public static void main(String[] args) throws IOException {
         // TODO code application logic here
+
+
+
 
         double za2 = 1.96d;
         double pCaciula = 0.097379d;
@@ -49,25 +72,53 @@ public class Markov {
         //String[] vector ={"EA", "E$", "E@", "EB", "EC", "ED", "EE", "EF", "EG", "EH", "EI", "E^", "EJ", "EK", "EL", "EM", "EN", "EO", "EP", "EQ", "ER", "ES", "E#", "ET", "E~", "EU", "EV", "EW", "EX", "EY", "EZ", "E ", "E.", "E%", "E}", "E-", "E{", "E*", "E,", "E:", "E;", "E?", "E!", "E\"", "E(", "E)", "E'"};
         String[] vector1 = {"A", "$", "@", "B", "C", "D", "E", "F", "G", "H", "I", "^", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "#", "T", "~", "U", "V", "W", "X", "Y", "Z", " ", ".", "%", "}", "-", "{", "*", ",", ":", ";", "?", "!", "\"", "(", ")", "'"};
         String[] vector2 = {"A", "$", "@", "B", "C", "D", "E", "F", "G", "H", "I", "^", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "#", "T", "~", "U", "V", "W", "X", "Y", "Z", " ", ".", "%", "}", "-", "{", "*", ",", ":", ";", "?", "!", "\"", "(", ")", "'"};
-
+         //   String[] vector1={"E"};
+         //   String[] vector2={"A"};
         //String[] vector = {"EA", "EB", "EC", "ED", "EE", "EF", "EG", "EI", "EJ", "EL", "EM", "EN", "EO", "EP", "ER", "ES", "ET", "EU", "EV", "EX", "EZ", "E#", "E~", "E ", "E.", "E,", "E:", "E?", "E!", "E-"};
         //String[] vector = {"AB", "AC", "AD", "AF", "AG", "AH", "AI", "AJ", "AL", "AM", "AN", "AP", "AR", "AS", "AT", "AU", "AV", "AZ", "A#", "A~", "A ", "A.", "A,", "A-", "BA", "BE", "BI", "BL", "BO", "BR", "BS", "BU", "B$", "B ", "CA", "CE", "CH", "CI", "CL", "CO", "CR", "CT", "CU", "C$", "C@", "C~", "C ", "C.", "C,", "DA", "DE", "DI", "DO", "DR", "DU", "D$", "D ", "D,", "EA", "EB", "EC", "ED", "EE", "EF", "EG", "EI", "EJ", "EL", "EM", "EN", "EO", "EP", "ER", "ES", "ET", "EU", "EV", "EX", "EZ", "E#", "E~", "E ", "E.", "E,", "E:", "E?", "E!", "E-", "FA", "FE", "FI", "FL", "FO", "FR", "FU", "F$", "F@", "GA", "GE", "GH", "GI", "GL", "GO", "GR", "GU", "G$", "G@", "G ", "HA", "HE", "HI", "HO", "IA", "IB", "IC", "ID", "IE", "IF", "IG", "II", "IJ", "IL", "IM", "IN", "IO", "IP", "IR", "IS", "IT", "IU", "IV", "IZ", "I#", "I~", "I ", "I.", "I,", "I?", "I-", "JA", "JE", "JI", "JO", "JU", "KA", "KI", "LA", "LB", "LC", "LD", "LE", "LI", "LL", "LN", "LO", "LT", "LU", "L$", "L@", "L~", "L ", "L.", "L,", "L-", "MA", "MB", "ME", "MI", "MN", "MO", "MP", "MU", "M$", "M@", "M~", "M ", "M,", "M-", "NA", "NC", "ND", "NE", "NF", "NG", "NI", "NO", "NS", "NT", "NU", "NV", "NZ", "N$", "N~", "N ", "N.", "N,", "N-", "OA", "OB", "OC", "OD", "OF", "OG", "OI", "OL", "OM", "ON", "OP", "OR", "OS", "OT", "OU", "OV", "OZ", "O#", "O~", "O ", "PA", "PE", "PI", "PL", "PO", "PR", "PT", "PU", "P$", "P@", "P ", "RA", "RB", "RC", "RD", "RE", "RF", "RG", "RI", "RL", "RM", "RN", "RO", "RP", "RR", "RS", "RT", "RU", "RV", "RZ", "R$", "R@", "R#", "R~", "R ", "R.", "R,", "R-", "SA", "SC", "SE", "SF", "SI", "SM", "SO", "SP", "ST", "SU", "S$", "S@", "S ", "S.", "S,", "S-", "TA", "TE", "TF", "TH", "TI", "TO", "TR", "TU", "T$", "T@", "T ", "T.", "T,", "T-", "UA", "UB", "UC", "UD", "UF", "UG", "UI", "UL", "UM", "UN", "UP", "UR", "US", "UT", "UV", "UZ", "U$", "U#", "U~", "U ", "U.", "U,", "U-", "VA", "VE", "VI", "VO", "VR", "VU", "V$", "V@", "V ", "XI", "Y ", "ZA", "ZB", "ZE", "ZI", "ZO", "ZU", "Z$", "Z@", "Z ", "$B", "$C", "$D", "$G", "$I", "$L", "$M", "$N", "$P", "$R", "$S", "$T", "$U", "$Z", "$#", "$~", "$ ", "$.", "$,", "$:", "$-", "@I", "@L", "@M", "@N", "@R", "@T", "^I", "^L", "^M", "^N", "^#", "#A", "#C", "#E", "#I", "#N", "#O", "#T", "#U", "# ", "~A", "~E", "~I", "~U", "~$", " A", " B", " C", " D", " E", " F", " G", " H", " I", " J", " K", " L", " M", " N", " O", " P", " R", " S", " T", " U", " V", " W", " Z", " $", " ^", " #", " ~", " {", " \"", " (", " *", ". ", ", ", ": ", "; ", "? ", "! ", "{ ", "} ", "-A", "-I", "-L", "-M", "-O", "-S", "-U", "-#", "-~", "\" ", ") ", "* ", };
-        String corpusPath="D:\\IN\\nco.txt";
-        String markovPath="D:\\OUT\\markov1.txt";
+        String corpusPath="D:\\IN\\corpus-curat.txt";
+        String corpusString = readStringFromFile(corpusPath);
+
+        int[] delta={25,22,18,69,11};
+        //int[] delta=new int[47];
+        for (int j = 0; j < vector1.length; j++) {
+            //System.out.println(corpusPath.indexOf("A"));
+           //  System.out.print(j + "=" + vector1[j]+"=");
+            //delta[j]=corpusString.indexOf(vector1[j]) + 1;
+//            System.out.println(vector1[j] + " = " + (corpusPath.indexOf(vector1[j]) + 1));
+
+//            System.out.println(corpusPath.indexOf(vector1[j]) + 1+"="+delta[j]);
+
+        String markovPath="D:\\OUT\\delta-"+delta[j]+".txt";
+       // String excelPath="D:\\OUT\\chirita5excel-markov.xlsx";
+
+        scrieMarkov(corpusPath,markovPath,delta[j]);
+        String lant1 = readStringFromFile("D:\\OUT\\markov1.txt");
+        String lant2 = readStringFromFile(markovPath);
+            System.out.print(vector1[j]+" = "+delta[j]);
+
+        comparatieeLanturi(lant1,lant2);
+        }
         //String outFilePath="D:\\OUT\\markov1.txt";
-        //String outFilePath="D:\\OUT\\markov1.txt";
+        //String outFilePath="D:\\OUT\\delta-cratima.txt";
         //String numeLant;
-        for (int k=1;k<50;k++){
+        //  am creat multe lanturi markov pentru a putea compara datele
+        /* am scris lntul marcov cu deta diferit
+                 for (int k=1;k<40;k++){
           //  numeLant"D:\\OUT\\teste-lant"+k+".txt";
-            scrieMarkov(corpusPath,"D:\\OUT\\teste-lant"+k+".txt");
+            scrieMarkov(corpusPath,"D:\\OUT\\teste-lant"+k+".txt",k);
 
         }
-//        scrieMarkov(corpusPath,outFilePath);
+          */
 
-        String filename = markovPath;   //"D:\\OUT\\markov-22oct.txt";
-        String str = readStringFromFile(markovPath);
-        String corpusAsString = readStringFromFile(corpusPath);  //declar corpusul ca un  string pentru a putea folosi lungimea sau numarul de ocurente pentru diferite caractere
-        String markovAsString = readStringFromFile(markovPath);  //declar lantul Markov ca un  string pentru a putea folosi lungimea sau numarul de ocurente pentru diferite caractere
+    //  srcis in excel rezultate
+
+//        scrieMarkov(corpusPath,outFilePath);
+/*
+        //String filename = markovPath;   //"D:\\OUT\\markov-22oct.txt";
+        //String str = readStringFromFile(markovPath);
+       String corpusAsString = readStringFromFile(corpusPath);  //declar corpusul ca un  string pentru a putea folosi lungimea sau numarul de ocurente pentru diferite caractere
+        //String markovAsString = readStringFromFile(markovPath);  //declar lantul Markov ca un  string pentru a putea folosi lungimea sau numarul de ocurente pentru diferite caractere
         //System.out.print(str.length());
         int coloana3;//coloana 3 = numarul de aparitii al grupuui de caractere in lantul Markov
         double coloana4 = 0d; //coloana 3 imprtit la coloana 2
@@ -83,49 +134,128 @@ public class Markov {
         double coloana14 = 0d; //coloana 12 * (1 - coloana 13)
         double coloana15 = 0d; //coloana 12 * (1 + coloana 13)
         int lungimeCorpus = corpusAsString.length();
+        int countRowExcel=0;
+        int countCellExcel=0;
 
-        for(int i=0;i<vector1.length;i++){
-            int coloana2=aparitii(vector1[i],str); //coloana 2  numarul de aparitii al literei reper in lantul Markov
-            int aparitiiReper=aparitii(vector1[i],corpusAsString);
-            //System.out.println(aparitiiReper+"  "+lungimeCorpus);
-            for(int j=0;j<vector2.length;j++){
-                //System.out.println(i+" "+ j+ "=" + aparitii(vector1[i]+vector2[j],str));
-               // System.out.print(i+" "+ j+ "=");
-                coloana3 = aparitii(vector1[i]+vector2[j],str);
-                if(coloana3>19){
-                    coloana4 = (double)coloana3/coloana2;
-                    System.out.print(vector1[i]+vector2[j]+"="+coloana2+"="+coloana3+"=");
-                    System.out.printf("%.4f=", coloana4);
-                    coloana5 = za2*Math.sqrt((1-coloana4)/(coloana4*coloana2));
-                    System.out.printf("%.4f=", coloana5);
-                    coloana6 = coloana4 * (1 - coloana5);
-                    coloana7 = coloana4 * (1 + coloana5);
-                    System.out.printf("%.4f = %.4f =", coloana6,coloana7);
-                    coloana8 = (double)aparitiiReper/lungimeCorpus;
-                    System.out.printf("%.4f=", coloana8);
-                    coloana9 = za2 * Math.sqrt((1-coloana8) / (coloana8 * lungimeCorpus / 200));
-                    System.out.printf("%.4f=", coloana9);
-                    coloana10 = (double) aparitii(vector1[i]+vector2[j],corpusAsString)/lungimeCorpus;
-                    System.out.printf("%.4f= ", coloana10);
-                    coloana11 = za2 * Math.sqrt((1-coloana10) / (coloana10 * lungimeCorpus / 200));
-                    System.out.printf("%.4f= ", coloana11);
-                    coloana12 =  coloana10 / coloana8;
-                    System.out.printf("%.4f= ", coloana12);
-                    coloana13 =  coloana11 + coloana9;
-                    System.out.printf("%.4f=", coloana13);
-                    coloana14 = coloana12 * (1-coloana13);
-                    System.out.printf("%.4f=", coloana14);
-                    coloana15 = coloana12 * (1+coloana13);
-                    System.out.printf("%.4f=", coloana15);
+        try {
+            FileOutputStream fos = new FileOutputStream(excelPath);
+            XSSFWorkbook workbook = new XSSFWorkbook();
+
+            XSSFSheet sheet = workbook.createSheet("sheet1");
+
+           // for (int fisier = 4; fisier < 39; fisier++) {
+               // String markovFile = "D:\\OUT\\teste-lant" + fisier + ".txt";
+            String markovFile = "D:\\OUT\\chirita5markov1.txt";
+                String str = readStringFromFile(markovFile);
+                String markovAsString = readStringFromFile(markovFile);
+                System.out.print(markovFile);
+
+                for (int i = 0; i < vector1.length; i++) {
+                    int coloana2 = aparitii(vector1[i], str); //coloana 2  numarul de aparitii al literei reper in lantul Markov
+                    int aparitiiReper = aparitii(vector1[i], corpusAsString);
+                    //System.out.println(aparitiiReper+"  "+lungimeCorpus);
+                    for (int j = 0; j < vector2.length; j++) {
+                        //System.out.println(i+" "+ j+ "=" + aparitii(vector1[i]+vector2[j],str));
+                        // System.out.print(i+" "+ j+ "=");
+                        coloana3 = aparitii(vector1[i] + vector2[j], str);
+                        if (coloana3 > 19) {
+                            coloana4 = (double) coloana3 / coloana2;
+                            System.out.print(vector1[i] + vector2[j] + "=" + coloana2 + "=" + coloana3 + "=");
+                            System.out.printf("%.4f=", coloana4);
+                            coloana5 = za2 * Math.sqrt((1 - coloana4) / (coloana4 * coloana2));
+                            System.out.printf("%.4f=", coloana5);
+                            coloana6 = coloana4 * (1 - coloana5);
+                            coloana7 = coloana4 * (1 + coloana5);
+                            System.out.printf("%.4f = %.4f =", coloana6, coloana7);
+                            coloana8 = (double) aparitiiReper / lungimeCorpus;
+                            System.out.printf("%.4f=", coloana8);
+                            coloana9 = za2 * Math.sqrt((1 - coloana8) / (coloana8 * lungimeCorpus / 200));
+                            System.out.printf("%.4f=", coloana9);
+                            coloana10 = (double) aparitii(vector1[i] + vector2[j], corpusAsString) / lungimeCorpus;
+                            System.out.printf("%.4f= ", coloana10);
+                            coloana11 = za2 * Math.sqrt((1 - coloana10) / (coloana10 * lungimeCorpus / 200));
+                            System.out.printf("%.4f= ", coloana11);
+                            coloana12 = coloana10 / coloana8;
+                            System.out.printf("%.4f= ", coloana12);
+                            coloana13 = coloana11 + coloana9;
+                            System.out.printf("%.4f=", coloana13);
+                            coloana14 = coloana12 * (1 - coloana13);
+                            System.out.printf("%.4f=", coloana14);
+                            coloana15 = coloana12 * (1 + coloana13);
+                            System.out.printf("%.4f=", coloana15);
 
 
-                    System.out.println();
-                };
+                            System.out.println();
 
-            }
+                            Row row = sheet.createRow(++countRowExcel);
 
+                            Cell cell1 = row.createCell(countCellExcel++);
+                            cell1.setCellValue(vector1[i] + vector2[j]);
+
+                            Cell cell2 = row.createCell(countCellExcel++);
+                            cell2.setCellValue(coloana2);
+
+                            Cell cell3 = row.createCell(countCellExcel++);
+                            cell3.setCellValue(coloana3);
+
+                            Cell cell4 = row.createCell(countCellExcel++);
+                            cell4.setCellValue(coloana4);
+
+                            Cell cell5 = row.createCell(countCellExcel++);
+                            cell5.setCellValue(coloana5);
+
+                            Cell cell6 = row.createCell(countCellExcel++);
+                            cell6.setCellValue(coloana6);
+
+                            Cell cell7 = row.createCell(countCellExcel++);
+                            cell7.setCellValue(coloana7);
+
+                            Cell cell8 = row.createCell(countCellExcel++);
+                            cell8.setCellValue(coloana8);
+
+                            Cell cell9 = row.createCell(countCellExcel++);
+                            cell9.setCellValue(coloana9);
+
+                            Cell cell10 = row.createCell(countCellExcel++);
+                            cell10.setCellValue(coloana10);
+
+                            Cell cell11 = row.createCell(countCellExcel++);
+                            cell11.setCellValue(coloana11);
+
+                            Cell cell12 = row.createCell(countCellExcel++);
+                            cell12.setCellValue(coloana12);
+
+                            Cell cell13 = row.createCell(countCellExcel++);
+                            cell13.setCellValue(coloana13);
+
+                            Cell cell14 = row.createCell(countCellExcel++);
+                            cell14.setCellValue(coloana14);
+
+                            Cell cell15 = row.createCell(countCellExcel++);
+                            cell15.setCellValue(coloana15);
+
+                            countCellExcel = 0;
+
+                        }
+                        ;
+
+                    }
+                    ;
+
+                }
+                ;
+
+
+            workbook.write(fos);
+            fos.flush();
+            fos.close();
         }
-
+             catch(FileNotFoundException e){
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            };
+*/
+//  end scris in excel rezultate
 
         //String str = "helloslkhellodjladfjhello";
 
@@ -178,6 +308,30 @@ public class Markov {
     }
 */
 
+
+    public static void comparatieeLanturi(String s1, String s2){
+        char[] lantChar1=s1.toCharArray();
+        char[] lantChar2=s2.toCharArray();
+        char[] reverseLant1 = new char[lantChar1.length];
+        char[] reverseLant2 = new char[lantChar2.length];
+
+        for(int j=0;j<lantChar1.length;j++){
+            reverseLant1[j]=lantChar1[lantChar1.length-j-1];
+        }
+
+        for(int j=0;j<lantChar2.length;j++){
+            reverseLant2[j]=lantChar2[lantChar2.length-j-1];
+        }
+
+        for(int j=0; j<lantChar2.length;j++){
+            //System.out.println(reverseLant1[j]+" "+reverseLant2[j]);
+            if (reverseLant1[j]!=reverseLant2[j]){
+                System.out.println("="+(lantChar2.length)+" = "+(lantChar2.length-j+1)+" =  "+(lantChar1.length-j+1));
+                break;
+            }
+        }
+
+    }
     public static void eRP1P2(double n, double zAlfa, double pCaciula){
         double p1=0,p2=0,er;
         double test=0d;
@@ -207,10 +361,10 @@ public class Markov {
         //    System.out.println(subString + " = " + count);
         return count;
     }
-    public static void scrieMarkov(String sIn, String sOut) throws IOException {
+    public static void scrieMarkov(String sIn, String sOut, int pozitieInitiala) throws IOException {
         int pas = 200;
         int pasCurent=0;
-        int initialPozition = 30;
+        int initialPozition = pozitieInitiala;
         char c;
         char cCurent;
         pasCurent = initialPozition;
